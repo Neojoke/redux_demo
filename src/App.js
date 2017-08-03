@@ -1,34 +1,23 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { createStore } from 'redux';
-
-const defaultState = 0;
-const reducer = (state= defaultState, action) => {
-  switch (action.type) {
-    case 'ADD':
-      return state+action.payload;  
-    default:
-      return state;
+class Counter extends Component {
+  render() {
+    return (
+      <div>
+        <h1>{this.props.value}</h1>
+        <button onClick={this.props.onIncrement}>+</button>
+        <button onClick={this.props.onDecrement}>-</button>
+      </div>
+    )
   }
 }
-const store = createStore(reducer);
-
 
 class App extends Component {
   render() {
     return (
-      <div className="App">
-        <div className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h2>Welcome to React</h2>
-        </div>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-      </div>
+      <h1>Welcome to the world!</h1>
     );
   }
 }
-
-export default App;
+export {App as default, Counter as Counter};
