@@ -5,19 +5,13 @@ class Counter extends Component {
   render() {
     return (
       <div>
-        <h1>{this.props.value}</h1>
-        <button onClick={this.props.onIncrement}>+</button>
-        <button onClick={this.props.onDecrement}>-</button>
+        <p>{ this.props.value }</p>
+        <button onClick={this.props.increment}>+</button>
+        <button onClick={this.props.decrement}>-</button>
+        <button onClick={this.props.delayIncrement}>delay</button>
+        <p>{this.props.state}</p>
       </div>
-    )
-  }
-}
-
-class App extends Component {
-  render() {
-    return (
-      <h1>Welcome to the world!</h1>
     );
   }
 }
-export {App as default, Counter as Counter};
+export { Counter as Counter};
