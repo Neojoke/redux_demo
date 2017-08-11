@@ -14,4 +14,15 @@ class Counter extends Component {
     );
   }
 }
-export { Counter as Counter};
+class NewCounter extends Component {
+  render() {
+    const { value, onIncreaseClick } = this.props;
+    return (
+      <div>
+        <span>{ value }</span>
+        <button onClick={ onIncreaseClick }>Increase</button>
+      </div>
+    );
+  }
+}
+export { Counter as Counter,NewCounter as NewCounter};
