@@ -7,7 +7,7 @@ import { createStore , combineReducers, applyMiddleware } from 'redux';
 import logger from 'redux-logger';
 import thunk from 'redux-thunk';
 import promiseMiddleware from 'redux-promise'
-import { connect } from 'react-redux';
+import { connect, Provider } from 'react-redux';
 const defaultState = {value:0,state:''};
 const CounterReducer =  (state = defaultState, action) => {
     switch (action.type) {
@@ -35,6 +35,14 @@ const delayDecrease = (dispatch,state)=>new Promise((resolve, reject)=>{
         resolve();
     }, 5000).then(()=>dispatch({type:'STATECHANGE',state:''})).then(()=>dispatch({type:'DECREMENT'}));
 })
+const Store = createStore(CounterReducer,applyMiddleware(logger,thunk,promiseMiddleware));
+const render = ()=>{
+    ReactDOM.render(<Counter state={Store.getState().state} value={Store.getState().value} increment={ ()=> Store.dispatch({type:"INCREMENT"}) } decrement={ ()=>Store.dispatch({type:"DECREMENT"}) } delayIncrement={()=>Store.dispatch(delayAdd('正在计算中'))}  />,document.getElementById('root'))
+}
+render();
+Store.subscribe(render);
+
+
 
 const increaseAction = {type:'increase'};
 const mapDispatchToProps = (dispatch, ownProps) => {
@@ -50,7 +58,7 @@ const mapStateToProps = (state, ownProps) => {
     }
 }
 const Module = connect(mapStateToProps,mapDispatchToProps)(NewCounter);
-function newCounterReducer(state, action) {
+function newCounterReducer(state={count:0}, action) {
     const count = state.count;
     switch (action.type) {
         case 'increase':
@@ -59,9 +67,12 @@ function newCounterReducer(state, action) {
             return state;
     }
 }
-const Store = createStore(CounterReducer,applyMiddleware(logger,thunk,promiseMiddleware));
-const render = ()=>{
-    ReactDOM.render(<Counter state={Store.getState().state} value={Store.getState().value} increment={ ()=> Store.dispatch({type:"INCREMENT"}) } decrement={ ()=>Store.dispatch({type:"DECREMENT"}) } delayIncrement={()=>Store.dispatch(delayAdd('正在计算中'))}  />,document.getElementById('root'))
-}
-render();
-Store.subscribe(render);
+const store1 = createStore(newCounterReducer)
+const render1 = ()=>{
+    ReactDOM.render(<Provider store={store1}>
+            <Module/>
+        </Provider>,document.getElementById('root1')
+    );
+};
+render1();
+store1.subscribe(render1);
