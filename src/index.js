@@ -8,71 +8,35 @@ import logger from 'redux-logger';
 import thunk from 'redux-thunk';
 import promiseMiddleware from 'redux-promise'
 import { connect, Provider } from 'react-redux';
-const defaultState = {value:0,state:''};
-const CounterReducer =  (state = defaultState, action) => {
+
+const action = {
+    type:'',
+    payload:''
+}
+const defaultState = {
+    value:10
+};
+const reducer = (state=defaultState,action)=>{
     switch (action.type) {
-        case "INCREMENT":
-            return Object.assign({},state,{value:state.value+1});
-        case "DECREMENT":
-            return Object.assign({},state,{value:state.value-1});
-        case "STATECHANGE":
-            return Object.assign({},state,{state:action.msg});
+        case 'INCREMENT':
+            return Object.assign({},state,{'value':state.value+1});
+        case 'DECREMENT':
+            return Object.assign({},state,{'value':state.value-1});
         default:
             return state;
     }
-};
-const delayAdd = (msg)=>(dispatch,getState)=>{
-    dispatch({type:'STATECHANGE',msg:msg});
-    return new  Promise((resolve, reject) => {
-        setTimeout(function() {
-            resolve();
-        }, 5000);
-    }).then(()=>dispatch({type:'STATECHANGE',msg:''})).then(()=>dispatch({type:'INCREMENT'}));
 }
-const delayDecrease = (dispatch,state)=>new Promise((resolve, reject)=>{
-    dispatch({type:'STATECHANGE',state:'马上就好了'})
-    setTimeout(function() {
-        resolve();
-    }, 5000).then(()=>dispatch({type:'STATECHANGE',state:''})).then(()=>dispatch({type:'DECREMENT'}));
-})
-const Store = createStore(CounterReducer,applyMiddleware(logger,thunk,promiseMiddleware));
+const store = createStore(reducer);
+const App = (props)=>{
+    return(
+    <div>
+        <Counter value = { store.getState().value } onDecrement={ ()=>store.dispatch({'type':'DECREMENT'}) } onIncrement = { ()=>store.dispatch({'type':'INCREMENT'}) }/>
+        <NewCounter/>
+    </div>
+    )
+}
 const render = ()=>{
-    ReactDOM.render(<Counter state={Store.getState().state} value={Store.getState().value} increment={ ()=> Store.dispatch({type:"INCREMENT"}) } decrement={ ()=>Store.dispatch({type:"DECREMENT"}) } delayIncrement={()=>Store.dispatch(delayAdd('正在计算中'))}  />,document.getElementById('root'))
+    ReactDOM.render(<App/>,document.getElementById('root'));
 }
+store.subscribe(render);
 render();
-Store.subscribe(render);
-
-
-
-const increaseAction = {type:'increase'};
-const mapDispatchToProps = (dispatch, ownProps) => {
-    return {
-        onIncreaseClick: () => {
-            dispatch(increaseAction);
-        }
-    }
-}
-const mapStateToProps = (state, ownProps) => {
-    return {
-        value: state.count
-    }
-}
-const Module = connect(mapStateToProps,mapDispatchToProps)(NewCounter);
-function newCounterReducer(state={count:0}, action) {
-    const count = state.count;
-    switch (action.type) {
-        case 'increase':
-            return { count:count+1}
-        default:
-            return state;
-    }
-}
-const store1 = createStore(newCounterReducer)
-const render1 = ()=>{
-    ReactDOM.render(<Provider store={store1}>
-            <Module/>
-        </Provider>,document.getElementById('root1')
-    );
-};
-render1();
-store1.subscribe(render1);

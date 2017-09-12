@@ -1,28 +1,40 @@
 import React, {Component} from 'react';
 import logo from './logo.svg';
 import './App.css';
-class Counter extends Component {
-  render() {
-    return (
-      <div>
-        <p>{ this.props.value }</p>
-        <button onClick={this.props.increment}>+</button>
-        <button onClick={this.props.decrement}>-</button>
-        <button onClick={this.props.delayIncrement}>delay</button>
-        <p>{this.props.state}</p>
-      </div>
-    );
+
+function Counter(props) {
+  function incrementIfOdd() {
+    if (props.value % 2 !== 0) {
+      props.onIncrement();
+    }
   }
-}
-class NewCounter extends Component {
-  render() {
-    const { value, onIncreaseClick } = this.props;
-    return (
-      <div>
-        <span>{ value }</span>
-        <button onClick={ onIncreaseClick }>Increase</button>
-      </div>
-    );
+  function incrementAsync() {
+    setTimeout(function () {
+      props.onIncrement();
+    }, 1000);
   }
+  const {value, onIncrement, onDecrement} = props;
+  return(
+    <p>
+      Clicked: {value}
+      items {' '}
+      <button onClick={onIncrement}>+</button>
+      {' '}
+      <button onClick={onDecrement}>-</button>
+      {' '}
+      <button onClick={ incrementIfOdd }>Increment if odd</button>
+      <button onClick={ incrementAsync }>Increment async</button>
+    </p>)
 }
-export { Counter as Counter,NewCounter as NewCounter};
+
+function NewCounter(props) {
+  const {value, onIncreaseClick} = props;
+  return (
+    <div>
+      <span>{ value }</span>
+      <button onClick={ onIncreaseClick }>Increase</button>
+    </div>
+  )
+}
+
+export {Counter as Counter, NewCounter as NewCounter};
